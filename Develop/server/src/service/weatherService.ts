@@ -9,18 +9,21 @@ interface Coordinates {
 // TODO: Define a class for the Weather object
 class Weather {
   temperature: number
+  windSpeed: number
   humidity: number
   description: string
   date: number
   icon: string
   constructor(
     temperature: number,
+    windSpeed: number,
     humidity: number,
     description: string,
     date: number,
     icon: string
   ) {
     this.temperature = temperature;
+    this.windSpeed = windSpeed;
     this.humidity = humidity;
     this.description = description;
     this.date = date;
@@ -93,12 +96,13 @@ class WeatherService {
   // TODO: Build parseCurrentWeather method
   private parseCurrentWeather(response: any): Weather {
     const temperature = response.main.temp;
+    const windSpeed = response.wind.speed;
     const humidity = response.main.humidity;
     const description = response.weather[0].description;
     const date = response.dt;
     const icon = response.weather[0].icon;
 
-    return new Weather(temperature, humidity, description, date, icon);
+    return new Weather(temperature, windSpeed, humidity, description, date, icon);
   }
   // TODO: Complete buildForecastArray method
   public processWeatherData(currentWeather: Weather, weatherData: any[]) {
@@ -110,11 +114,12 @@ class WeatherService {
     const forecastArray: Weather[] = [];
     for (const dataPoint of weatherData) {
       const temperature = dataPoint.main.temp;
+      const windSpeed = dataPoint.wind.speed;
       const humidity = dataPoint.main.humidity;
       const description = dataPoint.weather[0].description;
       const date = dataPoint.dt;
       const icon = dataPoint.weather[0].icon;
-      const forecast = new Weather(temperature, humidity, description, date, icon);
+      const forecast = new Weather(temperature, windSpeed, humidity, description, date, icon);
       forecastArray.push(forecast);
     }
     forecastArray.unshift(currentWeather);
