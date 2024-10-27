@@ -8,26 +8,29 @@ interface Coordinates {
 }
 // TODO: Define a class for the Weather object
 class Weather {
-  temperature: number
+  tempF: number
   windSpeed: number
   humidity: number
   description: string
-  date: number
+  date: string
   icon: string
+  city: string
   constructor(
     temperature: number,
     windSpeed: number,
     humidity: number,
     description: string,
     date: number,
-    icon: string
+    icon: string,
+    city: string
   ) {
-    this.temperature = temperature;
+    this.tempF = temperature;
     this.windSpeed = windSpeed;
     this.humidity = humidity;
     this.description = description;
-    this.date = date;
+    this.date =  new Date(date).toLocaleString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
     this.icon = icon;
+    this.city = city;
 
   }
 }
@@ -99,10 +102,10 @@ class WeatherService {
     const windSpeed = response.wind.speed;
     const humidity = response.main.humidity;
     const description = response.weather[0].description;
-    const date = response.dt;
+    const date = response.dt * 1000;
     const icon = response.weather[0].icon;
-
-    return new Weather(temperature, windSpeed, humidity, description, date, icon);
+    const city = response.name;
+    return new Weather(temperature, windSpeed, humidity, description, date, icon, city);
   }
   // TODO: Complete buildForecastArray method
   public processWeatherData(currentWeather: Weather, weatherData: any[]) {
@@ -119,7 +122,8 @@ class WeatherService {
       const description = dataPoint.weather[0].description;
       const date = dataPoint.dt;
       const icon = dataPoint.weather[0].icon;
-      const forecast = new Weather(temperature, windSpeed, humidity, description, date, icon);
+      const city = dataPoint.name;
+      const forecast = new Weather(temperature, windSpeed, humidity, description, date, icon, city);
       forecastArray.push(forecast);
     }
     forecastArray.unshift(currentWeather);
