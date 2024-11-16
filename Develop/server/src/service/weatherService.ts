@@ -28,7 +28,7 @@ class Weather {
     this.windSpeed = windSpeed;
     this.humidity = humidity;
     this.description = description;
-    this.date =  new Date(date).toLocaleString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+    this.date = new Date(date).toLocaleString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
     this.icon = icon;
     this.city = city;
 
@@ -38,29 +38,41 @@ class Weather {
 class WeatherService {
   // TODO: Define the baseURL, API key, and city name properties
   private baseURL = 'https://api.openweathermap.org/data/2.5';
-  private apiKey = process.env.WEATHER_API_KEY || ''; // Load from .env
+  private apiKey = process.env.API_KEY || ''; // Load from .env
 
 
-  // TODO: Create fetchLocationData method
-  // private async fetchLocationData(query: string): Promise<any> {
-  //   const geocodeURL = this.buildGeocodeQuery(query);
-  //   const response = await fetch(geocodeURL);
-  //   const locationData = await response.json();
-  //   return locationData;
-  // }
-  // TODO: Create destructureLocationData method
-  // private destructureLocationData(locationData: any): Coordinates {
-  //   const { lat, lon } = locationData[0];
-  //   return { latitude: lat, longitude: lon };
-  // }
-  // // TODO: Create buildGeocodeQuery method
-  // private buildGeocodeQuery(query: string): string {
-  //   console.log("buildGeocodeQuery",query);
-  //   return `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=1&appid=${this.apiKey}`;
-  // }
+  /**
+   * Get the 5 day forecast for a city
+   */
+  public async fetchForecast(city: string) {
+    const { lat, lon } = await this.fetchLocationData(city);
+
+    // see https://openweathermap.org/forecast5#5days
+    const queryURL = `${this.baseURL}/forecast?appid=${this.apiKey}&lat=${lat}&lon=${lon}&units=imperial`;
+    const response = await fetch(queryURL);
+    const records = await response.json();
+
+    // we only want 1 record for each of the 5 days
+    // we also want to get the weather @ mid-day so offset our records by 4
+
+    const rec = [
+      records.list[4],
+      records.list[12],
+      records.list[20],
+      records.list[28],
+      records.list[36],
+    ];
+
+
+    // now we need to turn that data into our Weather object
+    const weather = rec.map(p => this.parseCurrentWeather(p));
+    return weather
+  }
+
+
   // Fetch location data based on city name
   private async fetchLocationData(city: string): Promise<Coordinates> {
-    const queryURL = `${this.baseURL}/weather?q=${city}&appid=${this.apiKey}&units=metric`;
+    const queryURL = `${this.baseURL}/weather?q=${city}&appid=${this.apiKey}&units=imperial`;
     const response = await fetch(queryURL);
     // console.log(response, "fetchLocationData");
     if (!response.ok) {
@@ -77,15 +89,21 @@ class WeatherService {
       lon: locationData.coord.lon,
     };
   }
+  // // TODO: Create buildGeocodeQuery method
+  //  private buildGeocodeQuery(query: string): string {
+  //    console.log("buildGeocodeQuery",query);
+  //    return `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=1&appid=${this.apiKey}`;
+  //  }
+
   // TODO: Create buildWeatherQuery method
   private buildWeatherQuery(coordinates: Coordinates): string {
     const { lat, lon } = coordinates;
     return `${this.baseURL}/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${this.apiKey}`;
   }
-  // TODO: Create fetchAndDestructureLocationData method
-  // private async fetchAndDestructureLocationData(city: string): Promise<Coordinates> {
-  //   const locationData = await this.fetchLocationData(city);
-  //  // console.log(locationData, "fetchAndDestructureLocationData");
+  //  TODO: Create fetchAndDestructureLocationData method
+  //  private async fetchAndDestructureLocationData(city: string): Promise<Coordinates> {
+  //    const locationData = await this.fetchLocationData(city);
+  //   // console.log(locationData, "fetchAndDestructureLocationData");
 
   // }
   // TODO: Create fetchWeatherData method
@@ -136,8 +154,7 @@ class WeatherService {
     const coordinates = await this.fetchLocationData(city);
     // console.log(coordinates);
     const weatherData = await this.fetchWeatherData(coordinates);
-    console.log(weatherData);
-
+    // console.log(weatherData);
     return this.parseCurrentWeather(weatherData);
   }
 }
