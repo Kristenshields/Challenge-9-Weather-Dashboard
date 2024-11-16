@@ -70,6 +70,8 @@ This application is deployed using Render. To deploy the app:
 2. Set up environment variables (e.g., `API_KEY`).
 3. Deploy your application following the Render documentation.
 
+link to deployed application: https://challenge-9-weather-dashboard.onrender.com/
+
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
