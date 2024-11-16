@@ -4,7 +4,7 @@
 This repository contains the back-end code and deployment configuration for a weather dashboard application that displays current and future weather forecasts for multiple cities. The application integrates with the OpenWeather API to fetch weather data and provides a user-friendly interface to display this information.
 
 ## Mock Up
-![alt text](<Screenshot 2024-11-16 at 2.03.12 PM 2.png>)
+![alt text](<Screenshot 2024-11-16 at 2.24.18 PM.png>)
 
 
 ## Table of Contents

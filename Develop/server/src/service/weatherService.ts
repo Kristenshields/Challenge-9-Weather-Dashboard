@@ -38,7 +38,7 @@ class Weather {
 class WeatherService {
   // TODO: Define the baseURL, API key, and city name properties
   private baseURL = 'https://api.openweathermap.org/data/2.5';
-  private apiKey = process.env.API_KEY || ''; // Load from .env
+  private apiKey = process.env.WEATHER_API_KEY || ''; // Load from .env
 
 
   /**
